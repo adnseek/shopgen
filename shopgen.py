@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 import torch
 from tqdm.auto import tqdm
 import pandas
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, MetaData
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import Session
@@ -128,6 +128,7 @@ shop_id = input("Whats the id of your shop ? ")
 #     ideas_yes=1
 
 engine = create_engine('mysql+mysqlconnector://root@localhost/affiplay')
+metadata = MetaData()
 Session = sessionmaker(bind=engine)
 
 session = Session()
@@ -135,8 +136,12 @@ session = Session()
 exists = session.query(ShopCategory.shop_id).filter_by(shop_id=shop_id).first() is not None
 if exists:
     print("Shop "+shop_id+" already exists. Remove its categories first")
-    sys.exit()   
-
+    delete = input("Or shall i remove it ? (Be 100% sure!!!!!!), type 'delete'")
+    if (delete=="delete"):
+        shop_categories = Table('shop_categories', metadata)
+        # find shop_categories entries where shop_id=1 and delete them
+        session.query(ShopCategory).filter(ShopCategory.shop_id == shop_id).delete()
+    else: sys.exit()   
 
 if k=="":
     k = 100
