@@ -16,8 +16,9 @@ import re
 import sys
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 
-
+load_dotenv()
 Base = declarative_base()
 
 class Category(Base):
@@ -158,7 +159,7 @@ query = ""
 print("Python: 'Hey ChatGPT, i need some ideas about "+topic+"'")
 
 if __name__ == '__main__':
-    openai.api_key = "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"
+    openai.api_key = os.environ.get("OPENAI_API_KEY") 
     completion = openai.Completion.create(max_tokens=800, engine="text-davinci-003", prompt="Can you give me around 20 ideas for the main categories of my shop about "+topic)
     lines = wrap_text(completion.choices[0].text)
     query = topic + "("+(", ".join(lines))+")"
@@ -259,7 +260,7 @@ message = [
      {"role": "user", "content": prompt}, 
 ]
 
-openai.api_key = "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"
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 completion = openai.ChatCompletion.create(
     model="gpt-4",
     messages = message,
@@ -272,7 +273,7 @@ completion = openai.ChatCompletion.create(
 text = completion.choices[0].message.content;
 
 
-#print("The Result:")
+#print("The Result:")/
 #print(text)
 
 print("Python: Now i create the shop for you"); 
