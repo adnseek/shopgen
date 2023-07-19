@@ -70,7 +70,7 @@ class Shop:
                     self.custom_counter += 1
                 except Exception as e:
                     print(f"Error creating Category: {e}")
-                    continue  # Skip the rest of the loop if the Category can't be created
+                    return  # Return from function if the Category can't be created
 
             try:
                 shop_category = ShopCategory(shop_id=self.shop_id, name=existing_category.en, 
@@ -80,44 +80,13 @@ class Shop:
                 custom = False
             except Exception as e:
                 print(f"Error creating ShopCategory: {e}")
-                continue  # Skip the rest of the loop if the ShopCategory can't be created
+                return  # Return from function if the ShopCategory can't be created
 
             if isinstance(children, dict) and children:
                 self.create_shop_categories(children, shop_category.id)
                 
         self.session.commit()
 
-
-
-    def parse_categories(self, categories_list):
-        if not categories_list:
-            return []
-
-        lines = categories_list.split("\n")
-        lines = [line.lstrip() for line in lines]
-        tree = {}
-        path = [tree]
-
-        for line in lines:
-            depth = len(re.findall('\d', line))
-            name = line.strip()
-            name = re.sub('^[\d\.]+\s*', '', name)
-            name = re.sub('\s*-.*$', '', name)
-            name = re.sub('\sund.*$', '', name)
-            name = re.sub('\s&.*$', '', name)
-
-            if not name:
-                continue
-            if depth == 0:
-                path = [tree]
-            else:
-                path = path[:depth]
-
-            location = path[-1]
-            location[name] = {}
-            path.append(location[name])
-
-        return tree
 
 topic  = input("\nTopic: ")
 k = input("How many proposals do you want from Pinecone (Enter for 100) ? ")
@@ -136,7 +105,7 @@ session = Session()
 exists = session.query(ShopCategory.shop_id).filter_by(shop_id=shop_id).first() is not None
 if exists:
     print("Shop "+shop_id+" already exists. Remove its categories first")
-    delete = input("Or shall i remove it ? (Be 100% sure!!!!!!), type 'delete'")
+    delete = input("Or shall i remove it ? (Be 100% sure!!!!!!), type 'delete': ")
     if (delete=="delete"):
         shop_categories = Table('shop_categories', metadata)
         # find shop_categories entries where shop_id=1 and delete them
@@ -157,7 +126,7 @@ query = ""
 print("Python: 'Hey ChatGPT, i need some ideas about "+topic+"'")
 
 if __name__ == '__main__':
-    openai.api_key = "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"
+    openai.api_key = "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"
     completion = openai.Completion.create(max_tokens=800, engine="text-davinci-003", prompt="Can you give me around 20 ideas for the main categories of my shop about "+topic)
     lines = wrap_text(completion.choices[0].text)
     query = topic + "("+(", ".join(lines))+")"
@@ -258,7 +227,7 @@ message = [
      {"role": "user", "content": prompt}, 
 ]
 
-openai.api_key = "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"
+openai.api_key = "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"
 completion = openai.ChatCompletion.create(
     model="gpt-4",
     messages = message,
