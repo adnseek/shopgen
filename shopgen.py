@@ -96,7 +96,7 @@ shop_id = input("Whats the id of your shop ? ")
 # if (ideas == "y" or ideas == "yes"):
 #     ideas_yes=1
 
-engine = create_engine('mysql+mysqlconnector://root@localhost/affiplay')
+engine = create_engine('mysql+mysqlconnector://forge:559MKSy2FkgOWP280JTZ@localhost/ubernet_affiliateshop')
 metadata = MetaData()
 Session = sessionmaker(bind=engine)
 
@@ -126,7 +126,7 @@ query = ""
 print("Python: 'Hey ChatGPT, i need some ideas about "+topic+"'")
 
 if __name__ == '__main__':
-    openai.api_key = "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"
+    openai.api_key = "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"
     completion = openai.Completion.create(max_tokens=800, engine="text-davinci-003", prompt="Can you give me around 20 ideas for the main categories of my shop about "+topic)
     lines = wrap_text(completion.choices[0].text)
     query = topic + "("+(", ".join(lines))+")"
@@ -227,7 +227,7 @@ message = [
      {"role": "user", "content": prompt}, 
 ]
 
-openai.api_key = "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"
+openai.api_key = "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"
 completion = openai.ChatCompletion.create(
     model="gpt-4",
     messages = message,
@@ -258,7 +258,7 @@ pinecone.init(
 )
 
 index_name = 'awin'
-# # now connect to the index
+# # ngw connect to the index
 index = pinecone.GRPCIndex(index_name)
 file = open('awin_14_12_2022.json')
 dataset = json.load(file)
