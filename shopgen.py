@@ -88,6 +88,38 @@ class Shop:
         self.session.commit()
 
 
+
+
+    def parse_categories(self, categories_list):
+        if not categories_list:
+            return []
+
+        lines = categories_list.split("\n")
+        lines = [line.lstrip() for line in lines]
+        tree = {}
+        path = [tree]
+
+        for line in lines:
+            depth = len(re.findall('\d', line))
+            name = line.strip()
+            name = re.sub('^[\d\.]+\s*', '', name)
+            name = re.sub('\s*-.*$', '', name)
+            name = re.sub('\sund.*$', '', name)
+            name = re.sub('\s&.*$', '', name)
+
+            if not name:
+                continue
+            if depth == 0:
+                path = [tree]
+            else:
+                path = path[:depth]
+
+            location = path[-1]
+            location[name] = {}
+            path.append(location[name])
+
+        return tree
+
 topic  = input("\nTopic: ")
 k = input("How many proposals do you want from Pinecone (Enter for 100) ? ")
 # ideas = input("Shall i stuff the tree with some own ideas as custom categores (may be deleted later)(y/N)?")
